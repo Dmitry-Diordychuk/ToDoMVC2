@@ -1,0 +1,77 @@
+﻿@page
+@model IndexModel
+@{
+}
+<br />
+<h2>To Do List</h2>
+<br />
+
+@if(Model.Message != null)
+{
+    <div class="alert alert-info alert-dismissable" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        @Model.Message
+    </div>
+}
+
+<a asp-page="Create" class="btn btn-primary">Create New Task</a>
+<form method="post">
+    @if (Model.Todos.Count() > 0)
+    {
+        <br/><br/>
+        <table class="table">
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(m=>m.Todos.First().Description)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(m=>m.Todos.First().StartTime)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(m=>m.Todos.First().EndTime)
+                </th>
+                <th></th>
+                <th></th>
+            </tr>
+            @foreach(var item in Model.Todos)
+            {
+                @if (DateTime.Now > item.EndTime && !item.IsDone)
+                {
+                    @:<tr class="danger">
+                }
+                else if (item.IsDone)
+                {
+                    @:<tr class="success">
+                }
+                else
+                {
+                    @:<tr>
+                }
+                    <td>
+                        @Html.DisplayFor(m=>item.Description)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(m=>item.StartTime)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(m=>item.EndTime)
+                    </td>
+                    <td>
+                        <button asp-page-handler="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">Delete</button>
+                        <a asp-page="Edit" asp-route-id="@item.Id" class="btn btn-success btn-sm">Edit</a>
+                        @if (!item.IsDone && !item.IsFailed)
+                        {
+                            <button asp-page-handler="Done" asp-route-id="@item.Id" class="btn btn-success btn-sm">Done</button> 
+                        }
+                    </td>
+                @:</tr>
+            }
+        </table>
+    }
+    else
+    {
+        <div>There is no more tasks availble!</div>
+    }
+</form>
